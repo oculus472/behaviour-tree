@@ -1,6 +1,6 @@
 package org.oculus472.behaviourtree.composites;
 
-public class SequenceComposite<BlackboardType> extends Composite<BlackboardType> {
+public class SequenceComposite<T> extends Composite<T> {
 
   protected boolean shouldReturnState(State state) {
     return state == State.FAILED || state == State.RUNNING;

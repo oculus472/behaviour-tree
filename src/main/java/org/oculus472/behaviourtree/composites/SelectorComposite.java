@@ -1,6 +1,6 @@
 package org.oculus472.behaviourtree.composites;
 
-public class SelectorComposite<BlackboardType> extends Composite<BlackboardType> {
+public class SelectorComposite<T> extends Composite<T> {
 
   protected boolean shouldReturnState(State state) {
     return state == State.RUNNING || state == State.SUCCESS;
