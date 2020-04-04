@@ -1,7 +1,7 @@
 package org.oculus472.behaviourtree;
 
 public abstract class Node<T> {
-  public static enum State {
+  public enum State {
     FAILED,
     RUNNING,
     SUCCESS,

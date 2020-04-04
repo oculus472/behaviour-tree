@@ -17,8 +17,16 @@ public final class BehaviourTreeBuilder<T> {
     return registerChild(new ActionLeaf<T>().registerTask(task));
   }
 
+  public BehaviourTreeBuilder<T> action(ActionLeaf<T> task) {
+    return registerChild(task);
+  }
+
   public BehaviourTreeBuilder<T> condition(Function<T, Boolean> task) {
     return registerChild(new ConditionLeaf<T>().registerTask(task));
+  }
+
+  public BehaviourTreeBuilder<T> condition(ConditionLeaf<T> task) {
+    return registerChild(task);
   }
 
   public BehaviourTreeBuilder<T> sequence() {
