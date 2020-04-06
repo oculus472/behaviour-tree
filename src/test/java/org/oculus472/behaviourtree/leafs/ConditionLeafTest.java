@@ -4,21 +4,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 import org.oculus472.behaviourtree.Node.State;
-import org.oculus472.behaviourtree.TestBehaviourTree;
+import org.oculus472.behaviourtree.TestBlackboard;
 
 class ConditionLeafTest {
 
   @Test
   void testReturnsSuccessStateIfTaskReturnedTrue() {
-    ConditionLeaf<TestBehaviourTree> node = new ConditionLeaf<TestBehaviourTree>().registerTask(bb -> true);
+    ConditionLeaf<TestBlackboard> node = new ConditionLeaf<TestBlackboard>().registerTask(bb -> true);
 
-    assertEquals(State.SUCCESS, node.tick(TestBehaviourTree.getTree()));
+    assertEquals(State.SUCCESS, node.tick(TestBlackboard.getBlackboard()));
   }
 
   @Test
   void testReturnsFailedStateIfTaskReturnedFalse() {
-    ConditionLeaf<TestBehaviourTree> node = new ConditionLeaf<TestBehaviourTree>().registerTask(bb -> false);
+    ConditionLeaf<TestBlackboard> node = new ConditionLeaf<TestBlackboard>().registerTask(bb -> false);
 
-    assertEquals(State.FAILED, node.tick(TestBehaviourTree.getTree()));
+    assertEquals(State.FAILED, node.tick(TestBlackboard.getBlackboard()));
   }
 }

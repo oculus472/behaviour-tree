@@ -5,11 +5,13 @@ import java.util.ListIterator;
 import org.oculus472.behaviourtree.Node;
 import org.oculus472.behaviourtree.ParentNode;
 
-public abstract class Composite<BlackboardType> extends ParentNode<BlackboardType> {
-  private ArrayList<Node<BlackboardType>> children = new ArrayList<Node<BlackboardType>>();
+public abstract class Composite<T> extends ParentNode<T> {
 
-  public State tick(BlackboardType blackboard) {
-    ListIterator<Node<BlackboardType>> iterator = children.listIterator();
+  private ArrayList<Node<T>> children = new ArrayList<Node<T>>();
+
+  @Override
+  public State tick(T blackboard) {
+    ListIterator<Node<T>> iterator = children.listIterator();
 
     do {
       State state = iterator.next().tick(blackboard);
@@ -22,8 +24,10 @@ public abstract class Composite<BlackboardType> extends ParentNode<BlackboardTyp
     return getDefaultState();
   }
 
-  public boolean registerChild(Node<BlackboardType> child) {
-    return this.children.add(child);
+  public <RT extends ParentNode<T>> RT registerChild(Node<T> child) {
+    this.children.add(child);
+
+    return (RT) this;
   }
 
   protected abstract boolean shouldReturnState(State state);
