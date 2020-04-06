@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.oculus472.behaviourtree.Node.State;
-import org.oculus472.behaviourtree.TestBehaviourTree;
+import org.oculus472.behaviourtree.TestBlackboard;
 
 class ActionLeafTest {
 
@@ -14,8 +14,8 @@ class ActionLeafTest {
   @ParameterizedTest(name = "{index} => state = {0}")
   @EnumSource(State.class)
   void testReturnsCorrectState(State expectedState) {
-    ActionLeaf<TestBehaviourTree> node = new ActionLeaf<TestBehaviourTree>().registerTask(bb -> expectedState);
+    ActionLeaf<TestBlackboard> node = new ActionLeaf<TestBlackboard>().registerTask(bb -> expectedState);
 
-    assertEquals(expectedState, node.tick(TestBehaviourTree.getTree()));
+    assertEquals(expectedState, node.tick(TestBlackboard.getBlackboard()));
   }
 }

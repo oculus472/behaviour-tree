@@ -5,6 +5,9 @@ import java.util.function.Function;
 import org.oculus472.behaviourtree.Node.State;
 import org.oculus472.behaviourtree.composites.SelectorComposite;
 import org.oculus472.behaviourtree.composites.SequenceComposite;
+import org.oculus472.behaviourtree.decorators.InverterDecorator;
+import org.oculus472.behaviourtree.decorators.MaybeDecorator;
+import org.oculus472.behaviourtree.decorators.RepeatUntilCountDecorator;
 import org.oculus472.behaviourtree.decorators.SucceederDecorator;
 import org.oculus472.behaviourtree.leafs.ActionLeaf;
 import org.oculus472.behaviourtree.leafs.ConditionLeaf;
@@ -37,8 +40,20 @@ public final class BehaviourTreeBuilder<T> {
     return registerParent(new SelectorComposite<>());
   }
 
-  public BehaviourTreeBuilder<T> succeeder() {
+  public BehaviourTreeBuilder<T> succeed() {
     return registerParent(new SucceederDecorator<>());
+  }
+
+  public BehaviourTreeBuilder<T> repeatUntilCount(int repeatCount) {
+    return registerParent(new RepeatUntilCountDecorator<>(repeatCount));
+  }
+
+  public BehaviourTreeBuilder<T> invert() {
+    return registerParent(new InverterDecorator<>());
+  }
+
+  public BehaviourTreeBuilder<T> maybe() {
+    return registerParent(new MaybeDecorator<>());
   }
 
   public BehaviourTreeBuilder<T> insert(Node<T> subTree) {

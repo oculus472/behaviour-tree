@@ -11,15 +11,15 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.oculus472.behaviourtree.BehaviourTreeBuilder;
 import org.oculus472.behaviourtree.Node;
 import org.oculus472.behaviourtree.Node.State;
-import org.oculus472.behaviourtree.TestBehaviourTree;
+import org.oculus472.behaviourtree.TestBlackboard;
 import org.oculus472.behaviourtree.leafs.ActionLeaf;
 
 class SequenceCompositeTest {
 
   @Test
   void testReturnsFailedStateIfChildReturnsFailedState() {
-    Node<TestBehaviourTree> tree =
-        new BehaviourTreeBuilder<TestBehaviourTree>()
+    Node<TestBlackboard> tree =
+        new BehaviourTreeBuilder<TestBlackboard>()
             .sequence()
                 .action(bb -> State.SUCCESS)
                 .action(bb -> State.FAILED)
@@ -27,13 +27,13 @@ class SequenceCompositeTest {
             .finish()
             .build();
 
-    assertEquals(State.FAILED, tree.tick(TestBehaviourTree.getTree()));
+    assertEquals(State.FAILED, tree.tick(TestBlackboard.getBlackboard()));
   }
 
   @Test
   void testReturnsRunningStateIfChildReturnsRunningState() {
-    Node<TestBehaviourTree> tree =
-        new BehaviourTreeBuilder<TestBehaviourTree>()
+    Node<TestBlackboard> tree =
+        new BehaviourTreeBuilder<TestBlackboard>()
             .sequence()
                 .action(bb -> State.SUCCESS)
                 .action(bb -> State.RUNNING)
@@ -41,13 +41,13 @@ class SequenceCompositeTest {
             .finish()
             .build();
 
-    assertEquals(State.RUNNING, tree.tick(TestBehaviourTree.getTree()));
+    assertEquals(State.RUNNING, tree.tick(TestBlackboard.getBlackboard()));
   }
 
   @Test
   void testReturnsSuccessStateIfAllChildrenReturnSuccessState() {
-    Node<TestBehaviourTree> tree =
-        new BehaviourTreeBuilder<TestBehaviourTree>()
+    Node<TestBlackboard> tree =
+        new BehaviourTreeBuilder<TestBlackboard>()
             .sequence()
                 .action(bb -> State.SUCCESS)
                 .action(bb -> State.SUCCESS)
@@ -55,7 +55,7 @@ class SequenceCompositeTest {
             .finish()
             .build();
 
-    assertEquals(State.SUCCESS, tree.tick(TestBehaviourTree.getTree()));
+    assertEquals(State.SUCCESS, tree.tick(TestBlackboard.getBlackboard()));
   }
 
   @ParameterizedTest(name = "{index} => state = {0}")
@@ -63,15 +63,21 @@ class SequenceCompositeTest {
       value = State.class,
       names = {"FAILED", "RUNNING"})
   void testReturnsWhenChildReturnsState(State state) {
-    ActionLeaf<TestBehaviourTree> actionLeafMock = mock(ActionLeaf.class);
-    SequenceComposite<TestBehaviourTree> node = new SequenceComposite<TestBehaviourTree>();
+    @SuppressWarnings("unchecked")
+    ActionLeaf<TestBlackboard> actionLeafMock = (ActionLeaf<TestBlackboard>) mock(ActionLeaf.class);
+    actionLeafMock.registerTask(bb -> State.SUCCESS);
 
-    node.registerChild(new ActionLeaf<TestBehaviourTree>().registerTask(bb -> State.SUCCESS));
-    node.registerChild(new ActionLeaf<TestBehaviourTree>().registerTask(bb -> state));
-    node.registerChild(actionLeafMock.registerTask(bb -> State.SUCCESS));
-    TestBehaviourTree tree = TestBehaviourTree.getTree();
+    Node<TestBlackboard> node =
+        new BehaviourTreeBuilder<TestBlackboard>()
+          .sequence()
+            .action(bb -> State.SUCCESS)
+            .action(bb -> state)
+            .action(actionLeafMock)
+          .finish()
+          .build();
+    TestBlackboard blackboard = TestBlackboard.getBlackboard();
 
-    node.tick(tree);
-    verify(actionLeafMock, times(0)).tick(tree);
+    node.tick(blackboard);
+    verify(actionLeafMock, times(0)).tick(blackboard);
   }
 }
