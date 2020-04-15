@@ -6,20 +6,23 @@ import org.oculus472.behaviourtree.Node;
 import org.oculus472.behaviourtree.ParentNode;
 
 public abstract class Composite<T> extends ParentNode<T> {
-
-  private ArrayList<Node<T>> children = new ArrayList<Node<T>>();
+  private final ArrayList<Node<T>> children = new ArrayList<>();
+  private int currentChildIndex = 0;
 
   @Override
   public State tick(T blackboard) {
-    ListIterator<Node<T>> iterator = children.listIterator();
-
-    do {
-      State state = iterator.next().tick(blackboard);
+    for (; currentChildIndex < children.size(); currentChildIndex += 1) {
+      State state = children.get(currentChildIndex).tick(blackboard);
 
       if (shouldReturnState(state)) {
+        // So we don't repeat the current node.
+        currentChildIndex++;
+
         return state;
       }
-    } while (iterator.hasNext());
+    }
+
+    resetIteration();
 
     return getDefaultState();
   }
@@ -28,6 +31,10 @@ public abstract class Composite<T> extends ParentNode<T> {
     this.children.add(child);
 
     return (RT) this;
+  }
+
+  private void resetIteration() {
+    currentChildIndex = -1;
   }
 
   protected abstract boolean shouldReturnState(State state);

@@ -45,6 +45,25 @@ class SequenceCompositeTest {
   }
 
   @Test
+  void testReturnsRunningUntilSuccess() {
+    Node<TestBlackboard> tree =
+        new BehaviourTreeBuilder<TestBlackboard>()
+            .sequence()
+              .action(bb -> State.SUCCESS)
+              .action(bb -> State.RUNNING)
+              .action(bb -> State.RUNNING)
+              .action(bb -> State.RUNNING)
+              .action(bb -> State.SUCCESS)
+            .finish()
+            .build();
+
+    assertEquals(State.RUNNING, tree.tick(TestBlackboard.getBlackboard()));
+    assertEquals(State.RUNNING, tree.tick(TestBlackboard.getBlackboard()));
+    assertEquals(State.RUNNING, tree.tick(TestBlackboard.getBlackboard()));
+    assertEquals(State.SUCCESS, tree.tick(TestBlackboard.getBlackboard()));
+  }
+
+  @Test
   void testReturnsSuccessStateIfAllChildrenReturnSuccessState() {
     Node<TestBlackboard> tree =
         new BehaviourTreeBuilder<TestBlackboard>()

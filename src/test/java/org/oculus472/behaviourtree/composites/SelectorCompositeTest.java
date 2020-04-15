@@ -57,6 +57,25 @@ class SelectorCompositeTest {
     assertEquals(State.RUNNING, tree.tick(TestBlackboard.getBlackboard()));
   }
 
+  @Test
+  void testReturnsRunningUntilSuccess() {
+    Node<TestBlackboard> tree =
+        new BehaviourTreeBuilder<TestBlackboard>()
+            .selector()
+              .action(bb -> State.FAILED)
+              .action(bb -> State.RUNNING)
+              .action(bb -> State.RUNNING)
+              .action(bb -> State.RUNNING)
+              .action(bb -> State.SUCCESS)
+            .finish()
+            .build();
+
+    assertEquals(State.RUNNING, tree.tick(TestBlackboard.getBlackboard()));
+    assertEquals(State.RUNNING, tree.tick(TestBlackboard.getBlackboard()));
+    assertEquals(State.RUNNING, tree.tick(TestBlackboard.getBlackboard()));
+    assertEquals(State.SUCCESS, tree.tick(TestBlackboard.getBlackboard()));
+  }
+
   @ParameterizedTest(name = "{index} => state = {0}")
   @EnumSource(
       value = State.class,
